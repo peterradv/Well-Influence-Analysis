@@ -1,0 +1,279 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+
+\usepackage[backend=biber]{biblatex}
+\addbibresource{bibliography.bib}
+
+\title{Influence Analysis Simulation Study}
+\author{Peter Radvanyi}
+
+\begin{document}
+
+\maketitle
+
+\section{Objectives}
+\paragraph{}
+
+The primary objective is to compare the performance of different influence analysis metrics against well-based cross-validation for ordering wells based on their influence on model predictions. 
+
+\paragraph{}
+
+The secondary objective is to identify factors that could affect the performance of influence analysis metrics, such as plume complexity, number of monitoring wells, arrangement of monitoring wells and the assumption of measurement error type (additive or multiplicative). We would also like to examine the estimated influence of wells on the boundaries of the monitoring site.
+
+\section{Simulated Contaminant Plume Data}
+\paragraph{}
+
+There are three hypothetical plumes: simple, mid and complex. Simulated 'true' data from the PDE corresponding to the selected plume is loaded. This simulated data includes coordinates, time and concentration measurements of 22500 locations covering a large domain of 100x35 units. There are 20 measurement times for each location to cover a long enough period, making the number of observations $22500 * 20 = 450000$. The concentration measurements range from $0$ to $100$ with means of $5.70$, $6.60$ and $4.53$ for the simple, mid and complex plumes respectively. This indicates a heavy right-skew in the response.
+
+\section{Network designs}
+\paragraph{}
+
+A network design is made up of two factors: the number of wells and the well placement strategy. The number of wells is either 6, 12 or 24 to mimic similar GWSDAT example designs, while the placement strategy is either random, grid or expert. The loaded network design data includes the well IDs, which are the numbers of the wells as they appear in the list, and their coordinates.
+
+\section{Creating Well Data}
+\paragraph{}
+
+The simulated 'true' plume data loaded in section 2 is filtered for the coordinates of the monitoring wells which are loaded in section 3. This can be expressed by the following notation:
+
+\begin{equation}
+    W \subset P,
+\end{equation}
+
+where $W$ is the well data and $P$ is the simulated 'true' data. $W$ is the subset of $P$ where the coordinates match the coordinates of the monitoring wells.
+
+\section{Adding Random Noise to Well Data}
+\paragraph{}
+
+Random noise is added to the simulated well data to represent measurement errors. The added noise is either additive or multiplicative. In groundwater quality monitoring it is commonly assumed that the observation data has multiplicative measurement errors but in this case both scenarios were tested to assess the impact of this assumption on the performance of influence analysis metrics. Based on analysis of a real groundwater monitoring site \parencite[]{mclean2019}, the magnitude of the added random noise was 15\%. Additive noise was added using the following equation:
+
+\begin{equation}
+    y_i = z_i + \epsilon_i,
+\end{equation}
+
+where $y_i$ is the $i$-th observation with added measurement noise, $z_i$ is the $i$-th well data point without measurement noise (simulated 'true' data), $\epsilon_i$ is a random variable drawn from $N(\mu,\sigma)$, a normal distribution with mean, $\mu = 0$ and standard deviation, $\sigma = 0.15$ to represent $15\%$ measurement error. 
+
+Multiplicative noise was added using the following equation:
+
+\begin{equation}
+    y_i = z_i * \epsilon_i,
+\end{equation}
+
+where $y_i$ is the $i$-th observation with added measurement noise, $z_i$ is the $i$-th well data point without measurement noise (simulated 'true' data), $\epsilon_i$ is a random variable drawn from $N(\mu,\sigma)$, a normal distribution with mean, $\mu = 1$, because the mean of the noisy data should be equal to the mean of the original data, and standard deviation, $\sigma = 0.15$ to represent $15\%$ measurement error.
+
+\section{Log Transforming Observation Data}
+\paragraph{}
+
+The distribution of observations is right-skewed, because there are many low concentration measurements and relatively few high concentration ones. Therefore, the observation data are log transformed by: 
+
+\begin{equation}
+    log(1+y_i),
+\end{equation}
+
+where, $y_i$, $i = 1, 2..., n$ are the observations. 1 is added to each observation before the log transformation to account for values close to zero as they could potentially introduce negative values when additive noise is applied. Moreover, log-transforming the response variable which has multiplicative noise prior to modelling allows for an additive interpretation of the error.
+
+\section{Well-Based Cross-Validation}
+\paragraph{}
+
+Well-based cross-validation is used to determine the true well influence order.
+
+\subsection{Aim}
+\paragraph{}
+
+We would like to measure how much influence a particular well has on the model fit. We can measure this by assessing how the model fit changes if the observations of the well are removed from the underlying data prior to model fitting. Thus, we use a special case of cross-validation \parencite{cross-validation} where the number of folds equals the number of monitoring wells in the data set. In each step, all observations from a single well are omitted, and the remaining data are used as the training set, while the omitted observations are used as the test set. The well influence order is then given by the prediction errors corresponding to the omitted wells. 
+
+\paragraph{}
+
+Thus, the influence of well $k$ ($k=1,2,...,w$, where $w$ is the number of monitoring wells) is estimated by the prediction error calculated at the coordinates of $k$, using a model that is fitted to a subset of the observation data that does not include any observations from $k$.
+
+\subsection{Code Step-by-Step}
+\paragraph{}
+
+A list is created with length equal to the number of wells. Each item in the list is a duplicate of the observation data. 
+
+\paragraph{}
+
+From each item in the list, all observations of the well whose ID corresponds to the number of the item in the list are removed. The removed observations are stored in a separate list.
+
+\paragraph{}
+
+In each iteration, a P-splines model \parencite[]{gwsdat} is fitted to the observation data that excludes observations from well $k$. The resulting model objects are stored in a separate list. The model takes the following form:
+
+\begin{equation}
+\label{eqn:model}
+    y_{(-k)i} = \sum_{j=1}^{m}{b_j(x_{(-k)i})\alpha_j + \epsilon_i},
+\end{equation}
+
+where $i = 1, 2, ... n$, $k=1,2,...,w$ and $j = 1, 2, ... m$. $y_{(-k)i}$ are the contaminant concentrations excluding the response from well $k$, $b_j$ are the p-spline basis functions (either quadratic, which is the gwsdat default or cubic), $x_{(-k)i}$ are the corresponding explanatory variables (spatial coordinates and time of measurement), $\alpha_j$ are the basis coefficients and $\epsilon_i$ are the measurement errors, assumed to be independent and normally distributed $N(\mu,\sigma^2)$.
+
+\paragraph{}
+
+Predictions for the coordinates of the corresponding deleted well from each model are calculated and stored in a list.
+
+\paragraph{}
+
+Prediction error is calculated for each model using the above predictions and observations from the removed wells using the following equation:
+
+\begin{equation}
+    RMSE_k = \sqrt{\frac{\sum_{i=1}^{n_k}{(y_{ki} - \hat{y}_{ki})^2}}{n_k}},
+\end{equation}
+
+where $RMSE_k$ is the root mean squared prediction error for the $k$-th well, calculated using the model which was fitted to a data set that excluded the observations of the $k$-th well, $y_{ki}$ is the $i$-th observation from the $k$-th well, $\hat{y}_{ki}$ is the $i$-th fitted value for the $k$-th well and $n_k$ is the number of observations from the $k$-th well.
+
+\paragraph{}
+
+The well influence order is given by the resulting prediction error values. Well influence increases with increasing prediction error since the removed well would have had a significant effect on the model fit at that location.
+
+\section{Computing Influence Analysis Metrics}
+\paragraph{}
+
+Different influence analysis metrics are used to estimate the well influence order using information from a model fitted to the complete observation data set. 
+
+\subsection{Aim}
+\paragraph{}
+
+We would like to calculate influence analysis metric values for each observation in the data and then average these values across the monitoring wells the observations came from. Thus the wells will be ordered by the average influence analysis metric values of their observations. A higher average value means higher influence and consequently a higher placement.
+
+\paragraph{}
+
+The analysed influence analysis metrics are leverages, standardised residuals, Cook's distance, DFFITS, Hadi's influence measure and COVRATIO.
+
+\subsection{Code Step-by-Step}
+\paragraph{}
+
+A P-splines model is fitted to the complete observation data using equation \ref{eqn:model} with $y_i$ and $x_i$.
+
+\paragraph{}
+
+The hat matrix is computed from the fitted model. The fitted values, $\hat{y}$, are given by:
+
+\begin{equation}
+    \hat{y} = Hy,
+\end{equation}
+
+where the hat matrix $H$ is:
+
+\begin{equation}
+    H = B(B^TB + \lambda D_d^TD_d)^{-1}B^T
+\end{equation}
+
+where $B$ is the matrix of B-spline basis functions, $\lambda$ is a non-negative smoothing parameter and $D_d$ is a matrix that computes the successive $d$-th order differences across the sequence of $\alpha$-s in each of the 3 covariate dimensions. Each row in the hat matrix corresponds to one of the observations in our data. 
+
+\subsubsection{Leverages}
+\paragraph{}
+
+The leverages are the diagonal elements of the hat matrix:
+
+\begin{equation}
+    h_{11}, h_{22}, ... h_{nn}
+\end{equation}
+
+They are saved in a new data frame in which the rows correspond to the observations and the columns to the influence analysis metrics, first of which is the leverage. All influence analysis metric values will be saved in this data frame.
+
+\subsubsection{Standardised Residuals}
+\paragraph{}
+
+The standardised residuals for the observations are computed using the following equation:
+
+\begin{equation}
+    r^s_i = \frac{r_i}{\sqrt{\frac{\sum_{i=1}^{n}{r_i^2}}{n-p}}\sqrt{1-h_{ii}}},
+\end{equation}
+
+where $r^s_i$ represents the internally studentised (or standardised) residual \parencite[]{residuals} of the $i$-th observation, $r_i$ is the residual, $n$ is the number of observations, $p$ is the effective degrees of freedom which is given by the trace of the hat matrix and $h_{ii}$ is the leverage. The standardised residuals are added to the results data frame. 
+
+\subsubsection{Cook's Distance}
+\paragraph{}
+
+Cook's distance \parencite[]{cook} is calculated using the following equation:
+
+\begin{equation}
+    CD = \frac{1}{p} (r_i^s)^2 \frac{h_{ii}}{1-h_{ii}},
+\end{equation}
+
+where $p$ is the effective degrees of freedom which is given by the trace of the hat matrix, $r^s_i$ is the internally studentised (standardised) residual of the $i$-th observation and $h_{ii}$ is the leverage of the fitted value as given by the $i$-th row and $i$-th column of the hat matrix $H$. Cook's distance values corresponding to the observations are added to the results data frame.
+
+\subsubsection{DFFITS}
+\paragraph{}
+
+DFFITS \parencite[]{dffits} values are calculated using the following equation:
+
+\begin{equation}
+    DFFITS = r^e_i\sqrt{\frac{h_{ii}}{1-h_{ii}}},
+\end{equation}
+
+where $h_{ii}$ is the leverage of the $i$-th observation, and $r^e_i$ is the externally studentized residual \parencite[]{residuals}, which is calculated using the following formula:
+
+\begin{equation}
+    r^e_i = \frac{r_i}{\sqrt{\frac{\sum_{\substack{j=1 \\ j\neq i}}^n {r_j^2}}{n-p-1}}\sqrt{1-h_{ii}}},
+\end{equation}
+
+where $r_i$ represents the $i$-th residual and the first term in the denominator is an estimate of the standard deviation, $\sigma$ of the $i$-th residual based on all but the $i$-th residual. DFFITS values corresponding to the observations are subsequently added to the results data frame.
+
+\subsubsection{Hadi's Influence Measure}
+\paragraph{}
+
+Hadi's influence measure \parencite[]{hadi} is calculated using the following equation:
+
+\begin{equation}
+    H^2_i = \frac{pa_i^2}{(1-(1-h_{ii})a_i^2} + \frac{h_{ii}}{1-h_{ii}},
+\end{equation}
+
+where, $p$ is the effective degrees of freedom which is given by the trace of the hat matrix, $h_{ii}$ is the leverage of the $i$-th observation and $a_i$ is $i$-th adjusted residual calculated by:
+
+\begin{equation}
+    a_i = \frac{r_i}{\sqrt{q-h_{ii}}}.
+\end{equation}
+
+Hadi's influence measure values are added to the results data frame.
+
+\subsubsection{COVRATIO}
+\paragraph{}
+
+COVRATIO \parencite[]{covratio} is calcualted using the following equation:
+
+\begin{equation}
+    COVRATIO = \frac{1}{[\frac{n-p-1}{n-p}+\frac{{r^e_i}^2}{n-p}]^p(1-h_{ii})},
+\end{equation}
+
+where $n$ is the number of observations, $p$ is the effective degrees of freedom, $r^e_i$ is the externally studentized residual of the $i$-th observation and $h_{ii}$ is the leverage of the $i$-th observation. The COVRATIO values are added to the results data frame.
+
+\subsubsection{Creating Well Influence Order Based on Influence Analysis Metrics}
+\paragraph{}
+
+The influence analysis metric values (calculated for each observation) are grouped by well ID. Then, an average value for each well can be calculated. The chosen averaging functions are described below:
+
+\begin{itemize}
+    \item leverages - the median value is calculated
+    \item standardised residuals - the median absolute deviation (MAD) is calculated
+    \item Cook's distance - the median value is calculated
+    \item DFFITS - the median value is calculated
+    \item Hadi's influence measure - the median value is calculated
+    \item COVRATIO - the median value is calculated
+\end{itemize}
+
+The median and median absolute deviation were chosen, because they are robust measures when the data is non-normal, which might be the case with groundwater monitoring data even after the log-transformation. The wells are subsequently arranged by their average influence analysis metric values in a decreasing manner, resulting in one ordered list per influence analysis metric type. These orders can then be compared to the order created by the well-based cross-validation method.
+
+\section{Comparing Well Influence Orders}
+\paragraph{}
+
+The influence analysis-based well influence orders are compared by calculating a difference score $D$, that measures the total number of well placement differences between an influence analysis-based order and the well-based cross-validation-based order. This method is shown in the following equation:
+
+\begin{equation}
+    D = \sum_{i=1}^w{|o_i^{wbcv} - o_i^{ia}|},
+\end{equation}
+
+where $w$ is the number of monitoring wells, $o_i^{wbcv}$ is the position of the $i$-th well in the well-based cross-validation influence order and $o_i^{ia}$ is the position of the same well in the influence analysis metric-based influence order. 
+
+\paragraph{}
+
+The number of wells, $w$, can be different in scenarios, therefore $D$ needs to be standardised to allow for scenario-independent comparisons. This is accomplished by dividing $D$ by the maximum of $D$, which is a function of the number of wells. Then,
+
+\begin{equation}
+    D_s = \frac{D}{D_{max}},
+\end{equation}
+
+is the fraction of misplaced wells with a value of $0$ meaning the two well influence orders are equivalent and a value of $1$ meaning the two orders are complete opposites.
+
+\printbibliography
+
+\end{document}
