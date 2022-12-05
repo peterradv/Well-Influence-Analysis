@@ -240,7 +240,7 @@ for (a in plumes) {
 # influence analysis ------------------------------------------------------
         
         
-# hat martix --------------------------------------------------------------
+# hat matrix --------------------------------------------------------------
         
           # computing B and P
           mat    <- st.matrices(model$X, t(apply(model$X, 2, range)), ndims = ndims, 
