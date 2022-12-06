@@ -174,7 +174,7 @@ well_influence_sim <- function(plume, design, wells, error, snr, nseg, bdeg) {
   # influence analysis ------------------------------------------------------
   
   
-  # hat martix --------------------------------------------------------------
+  # hat matrix --------------------------------------------------------------
   
   # computing B and P
   mat    <- st.matrices(model$X, t(apply(model$X, 2, range)), ndims = ndims, 
