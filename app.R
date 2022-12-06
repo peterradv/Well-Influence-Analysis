@@ -39,35 +39,31 @@ ui <- fluidPage(
       plotOutput("barchart"),
       
       fluidRow(
-        column( width = 9, align='center',
+        column( width = 3,
                 h2("WBCV order"),
                 tableOutput("table1")
-        )),
-      
-      fluidRow(
-        column( width = 4,
+        ),
+        column( width = 3,
                 h2("CD order"),
                 tableOutput("table2")
         ),
-        column( width = 4,
+        column( width = 3,
                 h2("COVRATIO order"),
                 tableOutput("table7")
         ),
-        column( width = 4,
+        column( width = 3,
                 h2("DFFITS order"),
                 tableOutput("table5")
-        )),
-      
-      fluidRow(
-        column( width = 4,
+        ),
+        column( width = 3,
                 h2("HP order"),
                 tableOutput("table6")
         ),
-        column( width = 4,
+        column( width = 3,
                 h2("leverage order"),
                 tableOutput("table3")
         ),
-        column( width = 4,
+        column( width = 3,
                 h2("MADsr order"),
                 tableOutput("table4")
         )
