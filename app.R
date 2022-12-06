@@ -34,8 +34,45 @@ ui <- fluidPage(
       
     ),
     
-    mainPanel(plotOutput("barchart"))
-    
+    mainPanel(
+      h2("Standardised Difference Score of IA metrics"),
+      plotOutput("barchart"),
+      
+      fluidRow(
+        column( width = 9, align='center',
+                h2("WBCV order"),
+                tableOutput("table1")
+        )),
+      
+      fluidRow(
+        column( width = 4,
+                h2("CD order"),
+                tableOutput("table2")
+        ),
+        column( width = 4,
+                h2("COVRATIO order"),
+                tableOutput("table7")
+        ),
+        column( width = 4,
+                h2("DFFITS order"),
+                tableOutput("table5")
+        )),
+      
+      fluidRow(
+        column( width = 4,
+                h2("HP order"),
+                tableOutput("table6")
+        ),
+        column( width = 4,
+                h2("leverage order"),
+                tableOutput("table3")
+        ),
+        column( width = 4,
+                h2("MADsr order"),
+                tableOutput("table4")
+        )
+      )
+              )
   )
 )
 
@@ -62,16 +99,48 @@ server <- function(input, output) {
       
       data <- well_influence_sim(plume, design, wells, error, snr, nseg, bdeg)
       
-      ggplot(data, aes(x=method, y=diff_score)) + 
-        ylab("Standardised Difference Score (d/maxd)") +
-        xlab("IA Metric") +
-        geom_bar(stat='identity') +
-        geom_text(aes(label = round(diff_score, digits = 2)), vjust=-.5) +
-        ggtitle(paste0("Standardised Difference Scores. Scenario: ", plume, " ", design, " ", wells, " ", error, "."))
-    
+      output$barchart <- renderPlot({
+        ggplot(data$scores, aes(x=method, y=diff_score)) + 
+          ylab("Standardised Difference Score (d/maxd)") +
+          xlab("IA Metric") +
+          geom_bar(stat='identity') +
+          geom_text(aes(label = round(diff_score, digits = 2)), vjust=-.5) +
+          ggtitle(paste0("Standardised Difference Scores. Scenario: ", plume, " ", design, " ", wells, " ", error, "."))
       })
+        
+      output$table1 <- renderTable({
+        data$wbcv_order
+      })
+      
+      output$table2 <- renderTable({
+        data$cd_order
+      })
+      
+      output$table7 <- renderTable({
+        data$covratio_order
+      })
+      
+      output$table5 <- renderTable({
+        data$dffits_order
+      })
+      
+      output$table6 <- renderTable({
+        data$hp_order
+      })
+      
+      output$table3 <- renderTable({
+        data$leverage_order
+      })
+      
+      output$table4 <- renderTable({
+        data$standres_order
+      })
+      
+    })
   
   }, ignoreNULL = F, ignoreInit = T, once = F)
+  
+  
   
 }
 

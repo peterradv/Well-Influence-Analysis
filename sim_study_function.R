@@ -571,7 +571,37 @@ well_influence_sim <- function(plume, design, wells, error, snr, nseg, bdeg) {
   scores_bp <- scores_bp %>%
     gather(key = "method", value = "diff_score")
   
-  return(scores_bp)
+  wbcv_order <- wbcv_order %>%
+    rowid_to_column() %>%
+    rename(rank = rowid, well.id = V1) 
+  
+  cd_order <- cd_order %>%
+    rowid_to_column() %>%
+    rename(rank = rowid, well.id = V1)
+  
+  leverage_order <- leverage_order %>%
+    rowid_to_column() %>%
+    rename(rank = rowid, well.id = V1)
+  
+  standres_order <- standres_order %>%
+    rowid_to_column() %>%
+    rename(rank = rowid, well.id = V1)
+  
+  diffits_order <- diffits_order %>%
+    rowid_to_column() %>%
+    rename(rank = rowid, well.id = V1)
+  
+  hp_order <- hp_order %>%
+    rowid_to_column() %>%
+    rename(rank = rowid, well.id = V1)
+  
+  covratio_order <- covratio_order %>%
+    rowid_to_column() %>%
+    rename(rank = rowid, well.id = V1)
+  
+  return(list("scores" = scores_bp, "wbcv_order" = wbcv_order, "cd_order" = cd_order, "leverage_order" = leverage_order,
+              "standres_order" = standres_order, "dffits_order" = diffits_order, "hp_order" = hp_order,
+              "covratio_order" = covratio_order))
 }
 
 
