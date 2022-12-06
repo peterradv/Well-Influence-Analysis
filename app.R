@@ -17,9 +17,10 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      helpText("Select parameters and analyse the performance of different metrics 
-               in quantifying the influence of individual groundwater monitoring wells.
-               The lower the Standardised Difference Score the better."),
+      helpText("Select parameters and analyse the performance of different influence analysis metrics 
+               in ordering groundwater monitoring wells by influence compared to well-based cross-validation.
+               Lower standardised difference score means better performance. 
+               The tables show the respective well influence orders."),
       
       selectInput("plume", label = "Plume complexity", choices = plumes),
       selectInput("design", label = "Network design", choices = designs),
@@ -30,41 +31,41 @@ ui <- fluidPage(
       sliderInput("nseg2", label = "nseg 2", min = 1, max = 20, value = 6),
       sliderInput("nseg3", label = "nseg 3", min = 1, max = 20, value = 6),
       sliderInput("bdeg", label = "bdeg", min = 2, max = 5, value = 2),
-      actionButton("action", "Analyze!", class = "btn-lg btn-success")
+      actionButton("action", "Analyse", class = "btn-lg btn-success")
       
     ),
     
     mainPanel(
-      h2("Standardised Difference Score of IA metrics"),
+      h2("Standardised Difference Scores of IA metrics"),
       plotOutput("barchart"),
       
       fluidRow(
         column( width = 3,
-                h2("WBCV order"),
+                h2("WBCV"),
                 tableOutput("table1")
         ),
         column( width = 3,
-                h2("CD order"),
+                h2("CD"),
                 tableOutput("table2")
         ),
         column( width = 3,
-                h2("COVRATIO order"),
+                h2("COVRATIO"),
                 tableOutput("table7")
         ),
         column( width = 3,
-                h2("DFFITS order"),
+                h2("DFFITS"),
                 tableOutput("table5")
         ),
         column( width = 3,
-                h2("HP order"),
+                h2("HP"),
                 tableOutput("table6")
         ),
         column( width = 3,
-                h2("leverage order"),
+                h2("leverage"),
                 tableOutput("table3")
         ),
         column( width = 3,
-                h2("MADsr order"),
+                h2("MADsr"),
                 tableOutput("table4")
         )
       )
@@ -101,7 +102,7 @@ server <- function(input, output) {
           xlab("IA Metric") +
           geom_bar(stat='identity') +
           geom_text(aes(label = round(diff_score, digits = 2)), vjust=-.5) +
-          ggtitle(paste0("Standardised Difference Scores. Scenario: ", plume, " ", design, " ", wells, " ", error, "."))
+          ggtitle(paste0("Scenario: ", plume, " ", design, " ", wells, " ", error, "."))
       })
         
       output$table1 <- renderTable({
