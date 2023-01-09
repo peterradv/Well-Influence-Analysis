@@ -36,7 +36,6 @@ bdeg<-2
 pord<-1
 lambda.rel.time<-1
 lambda.rel<-c(1,1,lambda.rel.time)
-computeD=FALSE
 ndims = 3
 
   
@@ -168,7 +167,9 @@ for (a in plumes) {
               t = removedList[[k]][,4],
               y = removedList[[k]][,5],
               lambda = log.post,
-              nseg = nseg
+              nseg = nseg,
+              bdeg = bdeg,
+              pord = pord
             )
           }
         
@@ -231,7 +232,9 @@ for (a in plumes) {
             t = observations[,4],
             y = observations[,5],
             lambda = log.post,
-            nseg = nseg
+            nseg = nseg,
+            bdeg = bdeg,
+            pord = pord
           )
           
           rmse <- sqrt(sum((observations[,5] - fitted.smst(model))^2)/nrow(observations))
@@ -244,7 +247,7 @@ for (a in plumes) {
         
           # computing B and P
           mat    <- st.matrices(model$X, t(apply(model$X, 2, range)), ndims = ndims, 
-                                pord=pord, bdeg=bdeg, lambda.rel=lambda.rel, computeD=computeD)
+                                pord=pord, bdeg=bdeg, lambda.rel=lambda.rel)
           B      <- mat$B
           P      <- mat$P
           
