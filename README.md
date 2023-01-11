@@ -1,5 +1,7 @@
 # Well-Influence-Analysis
 
+Shiny app to run simulations with selected model parameters: https://peterradv.shinyapps.io/well-influence-analysis/
+
 This simulation study was conducted to explore the use of influential observation detection techniques, henceforth referred to as influence analysis (IA), to rank the monitoring wells of sites vulnerable to groundwater conatmination by importance.
 
 The ranking was based on the average influence of observations from each monitoring well on the predictions of a spatiotemporal p-splines model. The model was applied to simulated groundwater contaminant concentration data. The influences of the observations were estimated using different IA metrics. The resulting well influence rankings were compared to a ground truth computed by well-based cross-validation, which is a special case of k-fold cross-validation where the number of folds equals the number of monitoring wells. WBCV is computationally expensive because the computation time required to fit a model is multiplied by the number of monitoring wells. IA-based methods can thus provide an efficient approximate approach. 
