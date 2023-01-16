@@ -101,6 +101,17 @@ for (a in plumes) {
           group_by(well.id) %>%
           summarise_all(.funs = median)
         
+        # the influence of an observation is the distance of its COVRATIO value from 1
+        # function to transform raw covratio values so larger value = larger influence
+        cov_inf <- function(x) {
+          abs(x-1)
+        }
+        
+        # transforming covratio_summary values
+        for (e in 1:n) {
+          covratio_summary[paste0("covratio", e)] <- cov_inf(covratio_summary[paste0("covratio", e)])
+        }
+        
         
 # wbcv order --------------------------------------------------------------
         
