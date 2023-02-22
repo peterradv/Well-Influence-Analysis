@@ -246,8 +246,8 @@ for (a in plumes) {
 # hat matrix --------------------------------------------------------------
         
           # computing B and P
-          mat    <- st.matrices(model$X, t(apply(model$X, 2, range)), ndims = ndims, 
-                                pord=pord, bdeg=bdeg, lambda.rel=lambda.rel)
+          mat    <- st.matrices(model$X, t(apply(model$X, 2, range)), ndims=ndims, 
+                                pord=pord, bdeg=bdeg, lambda.rel=lambda.rel, nseg=nseg)
           B      <- mat$B
           P      <- mat$P
           
