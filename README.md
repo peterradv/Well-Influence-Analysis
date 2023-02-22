@@ -1,11 +1,17 @@
-# Well-Influence-Analysis
+# Well Influence Analysis
+
+### This simulation study is intended as a proof of concept for well influence analysis (WIA), a computationally efficient method based on influence diagnostics for ranking the wells of groundwater monitoring networks by importance.
+
+WIA is used to order the list of monitoring wells in the 'well redundancy analysis' feature of GWSDAT (https://github.com/WayneGitShell/GWSDAT).
+
+## The problem
+
+Collecting and analysing samples from groundwater monitoring wells is costly, time-consuming and incurs health and safety risks. Therefore, minimising fieldwork whilst maximising data value is crucial for developing a sustainable and efficient monitoring strategy. Fewer wells could be sufficient for supporting robust statistical models, provided they appropriately capture the spatiotemporal heterogeneity in contaminant concentrations. A possible approach for optimising monitoring networks is omitting wells whose observations do not substantially alter the model fit when deleted, i.e. they are not influential. 
+
+The influences of wells can be quantified using cross-validation, where each well (meaning its observations) is deleted sequentially and used as the test set for a model trained on the remainder of the data. The wells can then be ranked by their corresponding prediction errors. However, the computation time for this approach, depending on the number of wells, observations and model complexity, can be very long due to the number of times the model has to be re-fitted.
+
+WIA is an approximate alternative approach, which takes adventage of influence diagnostics commonly used in regression analysis. It aims to provide a guideline for omitting wells, by ranking them based on the average influence metric values of their observations.
 
 Shiny app to run simulations with selected model parameters: https://peterradv.shinyapps.io/well-influence-analysis/
 
-This simulation study was conducted to explore the use of influential observation detection techniques, henceforth referred to as influence analysis (IA), to rank the monitoring wells of sites vulnerable to groundwater conatmination by importance.
 
-The ranking was based on the average influence of observations from each monitoring well on the predictions of a spatiotemporal p-splines model. The model was applied to simulated groundwater contaminant concentration data. The influences of the observations were estimated using different IA metrics. The resulting well influence rankings were compared to a ground truth computed by well-based cross-validation, which is a special case of k-fold cross-validation where the number of folds equals the number of monitoring wells. WBCV is computationally expensive because the computation time required to fit a model is multiplied by the number of monitoring wells. IA-based methods can thus provide an efficient approximate approach. 
-
-Four parameters that could have an effect on the influence of wells were also considered. These parameters were the spatial complexity of the hypothetical contaminant plume, the number of monitoring wells on the site, the spatial arrangement of wells in the monitoring network and the assumption of the type of random noise or error used in the model. In total 54 scenarios were constructed and each scenario ran for 100 iterations. The aim of this study was to identify the IA metrics that provide the closest approximation to the WBCV-based influence ranking of the monitoring wells, and to explore whether the IA rankings are influenced by any of the above mentioned parameters.
-
-The results showed that, assuming multiplicative noise in the simulated groundwater contamination data, Cook's distance was the best IA metric to approximate the ground truth with a mean of 23% difference in well rankings throughout the simulation. The inaccuracy of the IA-based rankings increased with increasing contaminant plume complexity (20\% to 27\% for Cook's distance between a simple and a complex plume). Monitoring well placement also had an effect on the ranking with the expert network design providing the best results (mean difference of 18\%) and the grid based design providing the worst results (mean difference of 30\%). An increased number of monitoring wells provided more room for differences in well rankings but this effect leveled out given a sufficiently large number of wells. The lowest mean difference was observed in scenarios with 6 monitoring wells (17%). In scenarios with 12 and 24 wells the mean difference was almost the same (27% and 26% respectively) indicating that the influence of the number of monitoring wells levels out.
