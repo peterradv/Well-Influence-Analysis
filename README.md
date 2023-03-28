@@ -1,12 +1,18 @@
 # Well Influence Analysis
 
-### This simulation study is intended as a proof of concept for well influence analysis (WIA), a computationally efficient method for ranking the wells of groundwater monitoring networks by their influence on contaminant concentration estimates in regression-like statistical models.
+### This simulation study is intended as a proof of concept for well influence analysis (WIA), a computationally efficient method for ranking the wells of groundwater monitoring networks by their influence on the fitted contaminant concentration surface of regression-based statistical models.
 
-WIA is used to order the list of monitoring wells in the 'well redundancy analysis' feature of GWSDAT (https://github.com/WayneGitShell/GWSDAT).
+WIA is used to order the list of monitoring wells in the 'well redundancy analysis' feature of the open-source software Groundwater Spatiotemporal Data Analysis Tool (GWSDAT; https://github.com/WayneGitShell/GWSDAT).
 
 ## GWSDAT spatiotemporal smoother
 
+Statistical modelling is commonly used on groundwater quality monitoring data to analyse the behaviour of contaminants in space and time. The conventional approach to groundwater contamination data is to use spatial statistical models for individual sampling events. However, McLean et al. (2019; https://doi.org/10.1016/j.scitotenv.2018.10.231) demonstrated that a spatiotemporal model, which borrows strength across time, is more efficient and can achieve the same performance with much smaller sample sizes. 
+
+The spatiotemporal solute concentration smoother in GWSDAT uses a non-parametric regression technique known as Penalised Splines (P-splines), developed by Eilers & Marx (1992; https://doi.org/10.1214/ss/1038425655). For a detailed description of the GWSDAt spatiotemporal solute concentration smoother see https://github.com/WayneGitShell/GWSDAT_User_Manual and https://doi.org/10.1002/env.2347. A common feature of regression models is the use of the projection or hat matrix, which maps the vector of response values to the vector of fitted values. The diagonal elements of the hat matrix describe the influence of each response on the corresponding fitted value.
+
 ## Well redundancy analysis
+
+Collecting and analysing samples from groundwater monitoring wells is costly, time-intensive and incures health and safety risks. Therefore, minimising the number of sampling locations whilst maintaining adequate spatial monitoring coverage is of great importance. Fewer wells are often sufficient for supporting robust models. A natural approach to reducing the number of monitoring wells in a network is comparing a model fitted to the complete data set to a model fitted to a reduced data set from which all observations of a single well have been removed. If the ommission of the well does not cause significant changes to the solute concentration estimates, the well can be ignored, since it provides redundant data. The process can be repeated for all wells and their influence on solute concentrations can be quantified and recorded. This approach is a form of leave-one-out cross validation, and it allows for a ranking of the wells based on their influence. However, it also requires fitting a large number of models (equal to the number of wells in the network). Moreover, only one well can be dropped at a time based on the ranking. For each subsequent well removal the whole process has to be repeated, since the influences of wells are expected to change. This means that the computational cost increases linearly with the number of monitoring wells in the network and with the number of dropped wells. This makes this approach computationally infeasible.
 
 ## Statistical influence analysis
 
