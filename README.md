@@ -26,7 +26,6 @@ WIA aims to adapt influence statistics techniques in the context of well redunda
 
 The simulation study was designed to demonstrate the viability of WIA in terms of its "accuracy" compared to the cross validation based approach. 
 
-
 ## Shiny web application 
 
 Shiny app to run simulations with selected model parameters: https://peterradv.shinyapps.io/well-influence-analysis/
