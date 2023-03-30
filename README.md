@@ -70,14 +70,24 @@ This script was used to generate the coordinates of the monitoring wells using t
 
 ### 02-sim_study.R
 
+Performs well-based cross validation and calculates the influence metrics for each observation.
+
 ### 03-result_processing.R
+
+Separates the results to each individual method (wbcv and influence metrics) with corresponding well id-s and coordinates.
 
 ### 04-result_analysis.R
 
+Calculates the difference scores and well rankings for each influence metric. Also calculates the best metric based on the scores.
+
 ### 05-result_visualization.R
+
+Generates line plots, boxp lots and 95% variability band plots for the reasults in each scenario separately.
 
 ### 06-mean_well_rank.R
 
+Calculates the average placement of wells in the ranking for a selected scenario and method.
+
 ### 07-scores_summary_table.R
 
-
+Generates a table with the standardised difference scores from each influence metric for each scenario.
