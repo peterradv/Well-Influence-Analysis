@@ -16,7 +16,9 @@ Collecting and analysing samples from groundwater monitoring wells is costly, ti
 
 ## Statistical influence analysis
 
-Influence analysis refers to a collection of techniques in statistics, originating in regression analysis, that aim to measure the individual influences of observations on the outcome of a statistical procedure. Influential observations can often be outliers with respect to other response and/or explanatory variables, thus identifying them can help create more representative statistical models. Some well known influence metrics are Cook's distance (https://doi.org/10.2307/1268249), DFBETAS and DFFITS (https://doi.org/10.1002/0471725153). Influence metrics can be calculated using the observations' leverages and residuals. The leverages are the diagonal elements of the hat matrix. As opposed to cross validation, these techniqes estimate influence using information from a single model fit.
+Influence analysis refers to a collection of techniques in statistics, originating in regression analysis, that aim to measure the individual influences of observations on the outcome of a statistical procedure. Influential observations can often be outliers with respect to other response and/or explanatory variables, thus identifying them can help create more representative statistical models. Some well known influence metrics are Cook's distance (https://doi.org/10.2307/1268249), DFBETAS and DFFITS (https://doi.org/10.1002/0471725153). Influence metrics can be calculated using the observations' leverages and residuals. The leverages are the diagonal elements of the hat matrix. As opposed to cross validation, these techniqes estimate influence using information from a single model fit. 
+
+[CE_comp.pdf](https://github.com/peterradv/Well-Influence-Analysis/files/11110622/CE_comp.pdf)
 
 ## Well Influence Analysis
 
@@ -24,7 +26,7 @@ WIA aims to adapt influence statistics techniques in the context of well redunda
 
 ## Simulation study
 
-The simulation study was designed to demonstrate the viability of WIA in terms of its "accuracy" compared to the cross validation based approach. 
+The simulation study was designed to empirically demonstrate that WIA is a reasonable estimator of well influence when compared to the cross validation based approach. 
 
 ## Shiny web application 
 
