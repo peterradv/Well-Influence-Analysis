@@ -18,8 +18,6 @@ Collecting and analysing samples from groundwater monitoring wells is costly, ti
 
 Influence analysis refers to a collection of techniques in statistics, originating in regression analysis, that aim to measure the individual influences of observations on the outcome of a statistical procedure. Influential observations can often be outliers with respect to other response and/or explanatory variables, thus identifying them can help create more representative statistical models. Some well known influence metrics are Cook's distance (https://doi.org/10.2307/1268249), DFBETAS and DFFITS (https://doi.org/10.1002/0471725153). Influence metrics can be calculated using the observations' leverages and residuals. The leverages are the diagonal elements of the hat matrix. As opposed to cross validation, these techniqes estimate influence using information from a single model fit. 
 
-[CE_comp.pdf](https://github.com/peterradv/Well-Influence-Analysis/files/11110622/CE_comp.pdf)
-
 ## Well Influence Analysis
 
 WIA aims to adapt influence statistics techniques in the context of well redundancy analysis to provide a much more computationally efficient, albeit more approximate, alternative approach to leave-one-out cross validation. After model fitting, an influence statistic is calculated for each observation in the groundwater monitoring data set. The influence statistic values are then grouped by which well their corresponding observation originates from. The wells are then ranked by numerically ordering their median influence statistic values. Hence, **a well's overall influence on the regression model is determined by the average influence of its observations.**
