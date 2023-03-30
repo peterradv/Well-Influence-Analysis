@@ -24,10 +24,24 @@ WIA aims to adapt influence statistics techniques in the context of well redunda
 
 ## Simulation study
 
-The simulation study was designed to empirically demonstrate that WIA is a reasonable estimator of well influence when compared to the cross validation based approach. 
+The simulation study was designed to empirically demonstrate that WIA is a reasonable estimator of well influence when compared to the cross validation based approach. To identify the best estimator, six different influence metrics were tested for 100 realizations each in different scenarios. The scenarios were designed with three hypothetical groundwater contamination plumes of increasing geometric complexity (see image) and three well placement strategies (random, grid and expert) for 6, 12 and 24 wells on a domain with area 35 x 100 units. The effect of assuming additive or multiplicative measurement noise was also investigated on well influence estimates, although groundwater monitoring data is commonly assumed to have multiplicative noise.
+
+![plumes](https://user-images.githubusercontent.com/85235934/228821955-ca0e73ea-7904-42e6-8850-0ffc01b94650.png)
+
+The tested influence metrics were **leverages, studentized residuals, Cook's distance, DFFITS, COVRATIO and Hadi's influence measure**. The accuracy of each metric in estimating the baseline well influence ranking (computed by the cross validation based approach) was evaluated by calculating a difference score, which quantified placement differences in the well rankings. The difference score falls between 0 and 1 with 0 meaning the ranking is identical to the baseline and 1 meaning it is vastly different.
+
+## Results
+
+The results showed that in most scenarios, Cook's distance was the most reliable estimator with a mean standardised difference score of 0.28, which corresponds to 72% accuracy, and a standard deviation in the mean difference scores of 0.11 among the different scenarios (see image).
+
+![default_mult_sum_bar_whiskers](https://user-images.githubusercontent.com/85235934/228838839-34b531b2-efdb-44cf-88ae-6e15889fb37d.png | width = 100)
+
+
 
 ## Shiny web application 
 
-Shiny app to run simulations with selected model parameters: https://peterradv.shinyapps.io/well-influence-analysis/
+A shiny webb application was also developed to allow for running a single iteration of the simulation study on selected design features. The model parameters nseg 1-3 and bdeg refer to the spatiotemporal solute concentration smoother from GWSDAT. They control the degree of smoothness in the 3 dimensions and the power of the splines respectively. The default settings are nseg(6,6,6) and bdeg(2) corresponding to quadratic splines. Increasing these parameters decreases the smoothness of the model but comes with the burden of increasing computational cost. The output shows the normalised difference scores of the six influence metrics. A lower score means closer well influence estimates to well-based cross validation. The output also shows the rankings of the wells by cross validation and the influence metrics. This allows for direct comparison of the orders.
+
+The shiny app can be found at: https://peterradv.shinyapps.io/well-influence-analysis/
 
 
