@@ -12,7 +12,9 @@ The spatiotemporal solute concentration smoother in GWSDAT uses a non-parametric
 
 ## Well redundancy analysis
 
-Collecting and analysing samples from groundwater monitoring wells is costly, time-intensive and incures health and safety risks. Therefore, minimising the number of sampling locations whilst maintaining adequate spatial monitoring coverage is of great importance. Fewer wells are often sufficient for supporting robust models. A natural approach to reducing the number of monitoring wells in a network is comparing a model fitted to a complete data set to a model fitted to a reduced data set from which all observations of a single well have been removed. If the ommission of the well does not cause significant changes to the solute concentration estimates, the well can be ignored, since it provides redundant data. The process can be repeated for all wells and their influence on solute concentrations can be quantified and recorded. This approach is a form of leave-one-out cross validation, and it allows for a ranking of the wells based on their influence. However, it also requires fitting a large number of models (equal to the number of wells in the network). Moreover, only one well can be dropped at a time based on the ranking. For each subsequent well removal the whole process has to be repeated, since the influences of wells are expected to change. This means that the computational cost increases linearly with the number of monitoring wells in the network and with the number of dropped wells. This makes this approach computationally infeasible.
+Collecting and analysing samples from groundwater monitoring wells is costly, time-intensive and incures health and safety risks. Therefore, minimising the number of sampling locations whilst maintaining adequate spatial monitoring coverage is of great importance. Fewer wells are often sufficient for supporting robust models. A natural approach to reducing the number of monitoring wells in a network is comparing a model fitted to a complete data set to a model fitted to a reduced data set from which all observations of a single well have been removed. If the ommission of the well does not cause significant changes to the solute concentration estimates, the well can be ignored, since it provides redundant data. The option of dropping a well and re-fitting the model as described above is an available feature in the current build of GWSDAT (https://github.com/WayneGitShell/GWSDAT). However, the list of wells in the selection menu is ordered alpha-numerically, thus providing no information on which wells are more or less likely to cause large changes in the concentration estimates, leaving the user to adapt a trial-and-error approach. This is infeasible with a large number of wells, especially if multiple wells are to be dropped.
+
+Repeating the above process for each well in a network and quantifying and recording their influence on solute concentration estimates is a form of leave-one-out cross validation we shall call well-based cross validaiton. It allows for a ranking the wells based on influence, however, it also requires fitting a large number of models (equal to the number of wells in the network). Moreover, only one well can be dropped at a time based on the ranking. For each subsequent well removal the whole process has to be repeated, since the influences of wells are expected to change once a well is removed. This means that the computational cost increases linearly with the number of monitoring wells in the network and with the number of dropped wells. This makes this approach computationally infeasible.
 
 ## Statistical influence analysis
 
@@ -38,18 +40,44 @@ The tested influence metrics were **leverages, studentized residuals, Cook's dis
 
 ## Results
 
-WIA was a good estimator of well influence if the groundwater contamination data had multiplicative measurement noise, which is commonly assumed to be the case. The results showed that in most scenarios, Cook's distance was the most reliable estimator with a mean standardised difference score of 0.23, which corresponds to 77% accuracy, and a standard deviation in the mean difference scores of 0.098 among the different scenarios (see image).
+WIA was a good estimator of well influence if the groundwater contamination data had multiplicative measurement noise, which is commonly assumed to be the case. The results showed that in most scenarios, Cook's distance was the most reliable estimator with a mean standardised difference score of 0.23, which corresponds to **77%** accuracy, and a standard deviation in the mean difference scores of 0.098 among the different scenarios (see image).
 
 ![results](https://user-images.githubusercontent.com/85235934/228843841-c816e1f7-b5cf-4f67-8255-a53303660bc1.png)
 
-The breakdown of the results for Cook's distance by the design features of the simulation study can be seen on the figure below.
+The breakdown of the results for Cook's distance by the design features of the simulation study can be seen on the figure below:
 
 ![resultsv2](https://user-images.githubusercontent.com/85235934/228842456-1b7dbfcf-8365-4ba0-983a-a912862c865b.png)
+
+The results show that increasing plume complexity results in less accurate approximations to the baseline well influence ranking. Well placement also affected the results. Expert placement, meaning placement with knowledge of the plume's extent and behaviour, resulted in the lowest difference scores and variance. Finally, the lowest mean difference scores were observed in the 6-well scenarios, while there was no significant difference between 12 and 24 wells (although lower variance can be observed for 24 wells). This is most likely an artifact, due to the fewer permutations possible when comparing rankings with 6 wells rather than 12 or 24. 
+
+## Conclusion
+
+In summary, WIA is a reasonable estimator of well influence ranking by well-based cross validation. It has significant advantages in terms of computational efficiency, which makes it appropriate for integration into the GWSDAT framework. WIA will be used to order wells in the selection menu of the well redundancy analysis feature.
 
 ## Shiny web application 
 
 A shiny webb application was also developed to allow for running a single iteration of the simulation study on selected design features. The model parameters nseg 1-3 and bdeg refer to the spatiotemporal solute concentration smoother from GWSDAT. They control the degree of smoothness in the 3 dimensions and the power of the splines respectively. The default settings are nseg(6,6,6) and bdeg(2) corresponding to quadratic splines. Increasing these parameters decreases the smoothness of the model but comes with the burden of increasing computational cost. The output shows the normalised difference scores of the six influence metrics. A lower score means closer well influence estimates to well-based cross validation. The output also shows the rankings of the wells by cross validation and the influence metrics. This allows for direct comparison of the orders.
 
 The shiny app can be found at: https://peterradv.shinyapps.io/well-influence-analysis/
+
+## Running the scripts
+
+The scripts are numbered 1-7 which indicates the order they should be run in.
+
+### 01-well_network_gen.R
+
+This script was used to generate the coordinates of the monitoring wells using three different placement strategies for 6, 12 and 24 wells.
+
+### 02-sim_study.R
+
+### 03-result_processing.R
+
+### 04-result_analysis.R
+
+### 05-result_visualization.R
+
+### 06-mean_well_rank.R
+
+### 07-scores_summary_table.R
 
 
