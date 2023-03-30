@@ -24,19 +24,27 @@ WIA aims to adapt influence statistics techniques in the context of well redunda
 
 ## Simulation study
 
-The simulation study was designed to empirically demonstrate that WIA is a reasonable estimator of well influence when compared to the cross validation based approach. To identify the best estimator, six different influence metrics were tested for 100 realizations each in different scenarios. The scenarios were designed with three hypothetical groundwater contamination plumes of increasing geometric complexity (see image) and three well placement strategies (random, grid and expert) for 6, 12 and 24 wells on a domain with area 35 x 100 units. The effect of assuming additive or multiplicative measurement noise was also investigated on well influence estimates, although groundwater monitoring data is commonly assumed to have multiplicative noise.
+The simulation study was designed to empirically demonstrate that WIA is a reasonable estimator of well influence when compared to the cross validation based approach. To identify the best estimator, six different influence metrics were tested for 100 realizations each in different scenarios. The scenarios were designed with three hypothetical groundwater contamination plumes of increasing geometric complexity (see image) and three well placement strategies (random, grid and expert) for 6, 12 and 24 wells on a domain with area 35 x 100 units (see image). The effect of adding additive or multiplicative measurement noise to the raw data was also investigated on well influence estimates, although groundwater monitoring data is commonly assumed to have multiplicative noise. Multiplicative noise means that the measurement error scales with the magnitude of the solute concentration i.e. low concentration measurements will have smaller errors than high ones. On the other hand, additive noise means that regardless of the solute concentration, the measurement errors will be of similar magnitude. 
+
+three hypothetical contaminant plumes:
 
 ![plumes](https://user-images.githubusercontent.com/85235934/228821955-ca0e73ea-7904-42e6-8850-0ffc01b94650.png)
 
-The tested influence metrics were **leverages, studentized residuals, Cook's distance, DFFITS, COVRATIO and Hadi's influence measure**. The accuracy of each metric in estimating the baseline well influence ranking (computed by the cross validation based approach) was evaluated by calculating a difference score, which quantified placement differences in the well rankings. The difference score falls between 0 and 1 with 0 meaning the ranking is identical to the baseline and 1 meaning it is vastly different.
+well placement scenarios:
+
+![wells](https://user-images.githubusercontent.com/85235934/228855062-5cc937ca-951d-4f34-a39b-e10f58e27e4b.png)
+
+The tested influence metrics were **leverages, studentized residuals, Cook's distance, DFFITS, COVRATIO and Hadi's influence measure**. The accuracy of each metric in estimating the baseline well influence ranking (computed by the cross validation based approach) was evaluated by calculating a difference score, which quantified placement differences in the well rankings. The difference score falls between 0 and 1 with 0 meaning the ranking is identical to the baseline and 1 meaning it is vastly different. The study was conducted using two different sets of model settings. The first of which is the default setting for the spatiotemporal solute concentration smoother in GWSDAT, and the second is a setting with an increased number of cubic P-spline basis functions, resulting in a less smooth model.
 
 ## Results
 
-The results showed that in most scenarios, Cook's distance was the most reliable estimator with a mean standardised difference score of 0.28, which corresponds to 72% accuracy, and a standard deviation in the mean difference scores of 0.11 among the different scenarios (see image).
+WIA was a good estimator of well influence if the groundwater contamination data had multiplicative measurement noise, which is commonly assumed to be the case. The results showed that in most scenarios, Cook's distance was the most reliable estimator with a mean standardised difference score of 0.23, which corresponds to 77% accuracy, and a standard deviation in the mean difference scores of 0.098 among the different scenarios (see image).
 
-![default_mult_sum_bar_whiskers](https://user-images.githubusercontent.com/85235934/228838839-34b531b2-efdb-44cf-88ae-6e15889fb37d.png | width = 100)
+![results](https://user-images.githubusercontent.com/85235934/228843841-c816e1f7-b5cf-4f67-8255-a53303660bc1.png)
 
+The breakdown of the results for Cook's distance by the design features of the simulation study can be seen on the figure below.
 
+![resultsv2](https://user-images.githubusercontent.com/85235934/228842456-1b7dbfcf-8365-4ba0-983a-a912862c865b.png)
 
 ## Shiny web application 
 
