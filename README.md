@@ -2,7 +2,7 @@
 
 ### This simulation study is intended as a proof of concept for well influence analysis (WIA), a computationally efficient method for ranking the wells of groundwater monitoring networks by their influence on the fitted contaminant concentration surface of regression-based statistical models.
 
-WIA is used to order the list of monitoring wells in the 'well redundancy analysis' feature of the open-source software Groundwater Spatiotemporal Data Analysis Tool [GWSDAT](https://github.com/WayneGitShell/GWSDAT).
+WIA is used to order the list of monitoring wells in the 'well redundancy analysis' feature of the open-source software Groundwater Spatiotemporal Data Analysis Tool [GWSDAT](https://github.com/WayneGitShell/GWSDAT). An article on WIA will be published in the Proceedings of the 37th International Workshop on Statistical Modelling (ISBN: 978-3-947323-42-5). The paper can also be found on the database of the University of Glasgow [here](https://eprints.gla.ac.uk/303347/)
 
 ## GWSDAT spatiotemporal smoother
 
